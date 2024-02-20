@@ -1,5 +1,6 @@
 package com.project.ordermakanan.models;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -17,10 +18,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "favorite_foods")
 @Builder
-public class FavoriteFood {
+@IdClass(FavoriteFoodId.class)
+public class FavoriteFood implements Serializable {
 
     @Column(name = "is_favorite")
-    private Boolean favorite;
+    private Boolean isFavorite;
 
     @Column(name = "created_by")
     private String createdBy;

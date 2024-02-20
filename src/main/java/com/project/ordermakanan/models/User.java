@@ -57,5 +57,8 @@ public class User {
     private Set<Cart> carts;
 
     @OneToMany(mappedBy = "user")
+    private Set<FavoriteFood> favoriteFoods;
+
+    @OneToMany(mappedBy = "user")
     private Set<Order> orders;
 }

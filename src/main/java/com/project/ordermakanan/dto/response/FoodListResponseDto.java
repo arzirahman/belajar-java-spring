@@ -21,4 +21,6 @@ public class FoodListResponseDto {
     private String image_filename;
 
     private Boolean is_cart;
+
+    private Boolean is_favorite;
 }
