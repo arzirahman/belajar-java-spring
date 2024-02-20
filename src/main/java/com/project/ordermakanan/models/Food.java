@@ -34,9 +34,6 @@ public class Food {
     @Column(name = "price")
     private Integer price;
 
-    @Column(name = "ingridient")
-    private String ingredient;
-
     @Column(name = "created_by")
     private String createdBy;
 

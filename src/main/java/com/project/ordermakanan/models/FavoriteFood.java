@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@IdClass(FavoriteFood.class) 
 @Table(name = "favorite_foods")
 @Builder
 public class FavoriteFood {
