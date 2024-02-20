@@ -3,7 +3,6 @@ package com.project.ordermakanan.services;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import com.project.ordermakanan.models.Food;
 import com.project.ordermakanan.models.User;
 import com.project.ordermakanan.dto.request.AddCartRequest;
 import com.project.ordermakanan.dto.request.FoodListRequestDto;
-import com.project.ordermakanan.dto.response.AddCartResponse;
+import com.project.ordermakanan.dto.response.CartResponse;
 import com.project.ordermakanan.dto.response.FoodCategoryDto;
 import com.project.ordermakanan.dto.response.FoodListResponse;
 import com.project.ordermakanan.repositories.CartRepository;
@@ -65,12 +64,12 @@ public class FoodService {
             .body(new FoodListResponse(totalData, foodsDto, message, HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase()));
     }
     
-    public ResponseEntity<AddCartResponse> addCart(AddCartRequest request){
+    public ResponseEntity<CartResponse> addCart(AddCartRequest request){
         if(request.getFoodId() == null){
             String message = messageSource.getMessage("foodId.required", null, Locale.getDefault());
             return ResponseEntity
                 .badRequest()
-                .body(new AddCartResponse(0, null, message, HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()));
+                .body(new CartResponse(0, null, message, HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()));
         }
 
         int userId = JwtUtil.getCurrentUser().getUserId();
@@ -81,7 +80,7 @@ public class FoodService {
             String errorMessage = messageSource.getMessage("food.not.found", null, Locale.getDefault());
             return ResponseEntity
                 .badRequest()
-                .body(new AddCartResponse(0, null, errorMessage, HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()));
+                .body(new CartResponse(0, null, errorMessage, HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()));
         }
 
         Food food = optionalFood.get();
@@ -101,7 +100,42 @@ public class FoodService {
         String message = messageSource.getMessage("add.cart.success", null, Locale.getDefault());
         return ResponseEntity
         .ok()
-        .body(new AddCartResponse(1, foodDto, message, HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase()));
+        .body(new CartResponse(1, foodDto, message, HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase()));
+    }
+
+    public ResponseEntity<CartResponse> deleteCart(Integer foodId){
+        if(foodId == null){
+            String message = messageSource.getMessage("foodId.required", null, Locale.getDefault());
+            return ResponseEntity
+                .badRequest()
+                .body(new CartResponse(0, null, message, HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()));
+        }
+
+        int userId = JwtUtil.getCurrentUser().getUserId();
+
+        Optional<Cart> optionalCart = cartRepository.findCartByFoodAndUser(foodId, userId);
+        if (!optionalCart.isPresent()) {
+            String errorMessage = messageSource.getMessage("food.not.found", null, Locale.getDefault());
+            return ResponseEntity
+                .badRequest()
+                .body(new CartResponse(0, null, errorMessage, HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase()));
+        }
+
+        cartRepository.delete(optionalCart.get());
+
+        Food food = optionalCart.get().getFood();
+        FoodListResponseDto foodDto = new FoodListResponseDto(food.getFoodId(), 
+            new FoodCategoryDto(food.getCategory().getCategoryId(), food.getCategory().getCategoryName()), 
+            food.getFoodName(), 
+            food.getPrice(), 
+            food.getImageFilename(),
+            getIsCart(food.getFoodId(), JwtUtil.getCurrentUser().getUserId())
+        );
+
+        String message = messageSource.getMessage("delete.cart.success", null, Locale.getDefault());
+        return ResponseEntity
+            .ok()
+            .body(new CartResponse(0, foodDto, message, HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase()));
     }
 
     private Boolean getIsCart(Integer foodId, Integer userId) {

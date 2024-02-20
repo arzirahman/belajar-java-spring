@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class AddCartResponse {
+public class CartResponse {
     private long total;
     private FoodListResponseDto data;
     private String message;
