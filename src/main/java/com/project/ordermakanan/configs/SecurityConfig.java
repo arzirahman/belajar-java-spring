@@ -25,12 +25,10 @@ public class SecurityConfig {
     UserDetailService userDetailService;
 
     @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private AuthEntryPointJwt authEntryPointJwt;
 
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
-    }
+    @Autowired
+    private AuthTokenFilter authTokenFilter;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -55,16 +53,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPointJwt))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/user-management/user/sign-**").permitAll()
+                        auth.requestMatchers("/user-management/users/sign-**").permitAll()
                         .anyRequest().authenticated()
                 );
 
         http.authenticationProvider(authenticationProvider());
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

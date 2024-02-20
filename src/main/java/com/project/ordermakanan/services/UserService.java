@@ -132,7 +132,6 @@ public class UserService {
                     .status(HttpStatus.OK.getReasonPhrase())
                     .build());  
         } catch (AuthenticationException e){
-            log.error("Error during login process", e);
             String message = messageSource.getMessage("login.error", null, Locale.getDefault());
             return ResponseEntity
                     .badRequest()

@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.project.ordermakanan.models.UserDetail;
@@ -33,6 +34,17 @@ public class JwtUtil {
             .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
             .signWith(key(), SignatureAlgorithm.HS256)
             .compact();
+    }
+
+    public static UserDetail getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        
+        if (principal instanceof UserDetail) {
+            return (UserDetail) principal;
+        }
+        
+        return null;
     }
   
     private Key key() {
