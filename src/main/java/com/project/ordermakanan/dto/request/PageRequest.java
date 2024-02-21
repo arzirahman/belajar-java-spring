@@ -19,7 +19,7 @@ public class PageRequest {
     private Integer pageNumber;
 
     public Pageable getPage(){
-        int pageNumberValue = (pageNumber != null) ? pageNumber : 1;
+        int pageNumberValue = (pageNumber != null) ? pageNumber < 1 ? 1 : pageNumber : 1;
         int pageSizeValue = (pageSize != null) ? pageSize : 10;
         Sort sort = null;
 
@@ -32,6 +32,6 @@ public class PageRequest {
             sort = Sort.by(Direction.ASC, "foodName");
         }
 
-        return org.springframework.data.domain.PageRequest.of(pageNumberValue, pageSizeValue, sort);
+        return org.springframework.data.domain.PageRequest.of(pageNumberValue - 1, pageSizeValue, sort);
     }
 }
