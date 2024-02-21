@@ -68,7 +68,7 @@ public class FoodService {
             )
         ).collect(Collectors.toList());
 
-        long totalData = foodRepository.count(foodSpec);
+        long totalData = foods.getTotalElements();
 
         String message = messageSource.getMessage("get.food.success", null, Locale.getDefault());
 
