@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -123,8 +124,12 @@ public class UserService {
 
             String message = messageSource.getMessage("login.successful", null, Locale.getDefault());
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Token", jwt);
+
             return ResponseEntity
                 .ok()
+                .headers(headers)
                 .body(LoginResponse.builder()
                     .data(new LoginResponse.UserData(userDetail.getUserId(), jwt, "Bearer", userDetail.getUsername()))
                     .message(message)

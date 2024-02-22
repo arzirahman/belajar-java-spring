@@ -21,9 +21,9 @@ public class PageRequest {
     public Pageable getPage(){
         int pageNumberValue = (pageNumber != null) ? pageNumber < 1 ? 1 : pageNumber : 1;
         int pageSizeValue = (pageSize != null) ? pageSize : 10;
-        Sort sort = null;
+        Sort sort = Sort.by(Direction.ASC, "foodName");
 
-        if (sortBy != null) {
+        if (!sortBy.isEmpty()) {
             String[] parts = sortBy.split(",");
             String sortField = parts[0];
             String sortOrder = parts.length > 1 ? parts[1] : "ASC";

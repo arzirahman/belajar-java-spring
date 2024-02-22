@@ -12,7 +12,4 @@ import lombok.NoArgsConstructor;
 public class FoodListRequestDto {
     private String foodName;
     private Integer categoryId;
-    private String sortBy;
-    private int pageSize;
-    private int pageNumber;
 }
